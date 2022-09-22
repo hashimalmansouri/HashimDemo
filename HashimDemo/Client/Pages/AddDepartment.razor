@@ -1,0 +1,30 @@
+﻿@page "/dept"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@inject HttpClient _httpClient
+
+<h3>Add Department</h3>
+
+<EditForm Model="Model" OnSubmit="FormSubmit">
+    <div class="row">
+        <div class="col-md-6">
+            <InputText @bind-Value="Model.Name" DisplayName="Enter Department Name ..." class="form-control" />
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <br />
+            <h3>@Message</h3>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    Department Model { get; set; }
+    string Message { get; set; } = string.Empty;
+    protected override void OnInitialized()
+    {
+        Model = new Department();
+    }
+    async Task FormSubmit()
+    {
+        var response = await _httpClient.PostAsJsonAsync("api/Departments", Model);
+        Message = await response.Content.ReadAsStringAsync();
+    }
+}
